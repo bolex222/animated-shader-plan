@@ -1,0 +1,18 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#canvas {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+}
+
+
+.scrollDistance {
+  height: 400vh;
+  width: 20px;
+    background: linear-gradient(45deg, blue, red);
+}
