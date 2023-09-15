@@ -13,7 +13,12 @@ export class Scene {
     const canvas = document.querySelector(querySelector);
     if (!canvas) {throw new Error('Scene: canvas not found')}
     this.#scene = new ThreeScene();
-    this.#renderer = new WebGLRenderer({ canvas, alpha: true });
+    this.#renderer = new WebGLRenderer({
+      canvas,
+      alpha: true,
+      clearColor: 0xff0000,
+      clearAlpha: 0,
+    });
   }
 
   handleScreenResize = () => {

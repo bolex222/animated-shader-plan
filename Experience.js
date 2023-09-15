@@ -2,7 +2,7 @@ import { Camera } from './Camera'
 import { ScrollManager } from './ScrollManager.js'
 import { ScreenManager } from './ScreenManager.js'
 import { Scene } from './Scene.js'
-import { Plan } from './Plan.js'
+import { Plan } from './plan/Plan.js'
 import * as THREE from 'three'
 
 export class Experience {
