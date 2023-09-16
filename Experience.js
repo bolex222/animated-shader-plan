@@ -54,7 +54,7 @@ export class Experience {
   tick = (num) => {
 
     const animationProgression = this.#scrollManager.scrollProgression
-    this.playAllCallbacks(animationProgression)
+    this.playAllCallbacks(animationProgression, num)
     this.#scene.render(this.#camera)
     this.#rafReference = requestAnimationFrame(this.tick)
   }
