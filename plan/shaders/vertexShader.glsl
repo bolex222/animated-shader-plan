@@ -1,7 +1,7 @@
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
-uniform float uProgress;
+# uniform float uProgress;
 uniform float uDelay;
 uniform float uLerpProgression;
 
@@ -9,8 +9,6 @@ attribute vec3 position;
 attribute vec2 uv;
 
 varying vec2 vUv;
-
-#define PI 3.1415926535897932384626433832795
 
 float easeOutQuad(float x) {
     return 1. - (1. - x) * (1. - x);
