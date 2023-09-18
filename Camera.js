@@ -12,7 +12,7 @@ export class Camera extends PerspectiveCamera {
 
   fitScreen = () => {
     const horizontalFov = calculateHorizontalFov(this.#__verticalFov, window.innerWidth / window.innerHeight)
-    this.position.z = calculateAdjacent(degToRad( horizontalFov / 2 ), 0.5)
+    this.position.z = calculateAdjacent(degToRad( horizontalFov / 2 ), 0.5);
   }
 
   handleScreenResize = () => {

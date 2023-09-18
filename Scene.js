@@ -1,4 +1,8 @@
 import { WebGLRenderer, Scene as ThreeScene } from 'three'
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
+import renderer from 'three/addons/renderers/common/Renderer.js'
+import * as THREE from 'three/addons/shaders/FXAAShader.js'
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 
 export class Scene {
 
@@ -16,7 +20,7 @@ export class Scene {
     this.#renderer = new WebGLRenderer({
       canvas,
       alpha: true,
-      clearColor: 0xff0000,
+      clearColor: 0x000000,
       clearAlpha: 0,
     });
   }

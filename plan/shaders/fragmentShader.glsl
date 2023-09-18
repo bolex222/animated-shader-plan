@@ -3,7 +3,6 @@ precision highp float;
 uniform float uTime;
 uniform float uProgress;
 uniform vec2 uResolution;
-uniform vec4 uVariable;
 
 varying vec2 vUv;
 
@@ -15,18 +14,17 @@ float sdBox( in vec2 p, in vec2 b )
 
 void main()
 {
-
-    vec2 val = (2.0 * gl_FragCoord.xy) / uResolution.xy;
-
+    // plan ratio
     float ratio = uResolution.x / uResolution.y;
-
+    // radius size
     float radius = 0.3 * (1. - uProgress );
-
+    // new calculated ratio to make of the recatngle on which the sdf is calculated
     float newRatio = (ratio - radius) / (1. - radius);
-
+    // new position of the pixel
     vec2 p = (vUv * vec2(ratio * 2., 2.) - vec2(ratio, 1.)) /vec2((ratio, 1.));
-
+    // calculate the sdf
     float d = sdBox( p, vec2(newRatio *(1. - radius), 1. - radius));
+    // alpha calculated on the sdf and the radius
 
     gl_FragColor = vec4(vec3(1., 0., 0.),1. - step(radius, d));
 }
