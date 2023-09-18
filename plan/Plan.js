@@ -2,8 +2,6 @@ import * as THREE from 'three'
 import vertexShader from './shaders/vertexShader.glsl'
 import fragmentShader from './shaders/fragmentShader.glsl'
 import gui from '../gui.js'
-import { clamp } from '../Maths.utils.js'
-
 
 export class Plan extends THREE.Mesh {
 
@@ -17,7 +15,8 @@ export class Plan extends THREE.Mesh {
     const material = new THREE.RawShaderMaterial({
       fragmentShader,
       vertexShader,
-      alpha: true,
+      wireframe: false,
+      // alpha: true,
       transparent: true,
       uniforms: {
         uTime: { value: 0 },
@@ -46,16 +45,13 @@ export class Plan extends THREE.Mesh {
 
   animate = (animationProgression, time) => {
     this.material.uniforms.uTime.value = time
-    // this.material.uniforms.uProgress.value = animationProgression
     const localLerp = this.#previousValue + ((  animationProgression - this.#previousValue) * 0.2 )
     const localLerp2 = this.#previousValue2 + ((  animationProgression - this.#previousValue2) * 0.1 )
     this.material.uniforms.uProgress.value = localLerp
     this.material.uniforms.uLerpProgression.value = localLerp2
-    // console.log(animationProgression, localLerp)
     this.#previousValue = localLerp
     this.#previousValue2 = localLerp2
 
-    console.log(localLerp+ ( (animationProgression - localLerp) * this.#debug.x ))
-
+    // console.log(localLerp+ ( (animationProgression - localLerp) * this.#debug.x ))
   }
 }

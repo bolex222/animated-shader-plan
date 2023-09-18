@@ -12,18 +12,9 @@ varying vec2 vUv;
 
 #define PI 3.1415926535897932384626433832795
 
-float easeInExpo(float x) {
-    return x == 0. ? 0. : pow(2., 10. * x - 10.);
+float easeOutQuad(float x) {
+    return 1. - (1. - x) * (1. - x);
 }
-
-float easeInSine(float x) {
-    return 1. - cos((x * PI) / 2.);
-}
-
-float easeOutSine(float x) {
-    return sin((x * PI) / 2.);
-}
-
 
 void main()
 {
@@ -36,10 +27,11 @@ void main()
 //    float delayedProgress = clamp(( ( progress - (uv.y * uDelay ) ) * (1. + ((uDelay ) / (1. - uDelay)))), 0., 1.);
 //    modelPosition.z = -3. * delayedProgress ;
 
-    float lerpBalance = lerpProgress + (easeOutSine( uv.y ) * (progress - lerpProgress));
-    modelPosition.z = -3. * lerpBalance;
-//    modelPosition.z -= ( z - modelPosition.z ) * 0.10;
+    float lerpBalanceY = lerpProgress + (easeOutQuad( uv.y ) * (progress - lerpProgress));
+    float lerpBalanceX = lerpProgress + (easeOutQuad( 1. - uv.x ) * (progress - lerpProgress));
 
+    modelPosition.z = -1.5 * lerpBalanceY;
+    modelPosition.z += -1.5 * lerpBalanceX;
 
     vec4 viewPosition = viewMatrix * modelPosition;
     vec4 projectedPosition = projectionMatrix * viewPosition;

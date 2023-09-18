@@ -17,7 +17,7 @@ void main()
     // plan ratio
     float ratio = uResolution.x / uResolution.y;
     // radius size
-    float radius = 0.3 * (1. - uProgress );
+    float radius = 0.2 * (1. - uProgress );
     // new calculated ratio to make of the recatngle on which the sdf is calculated
     float newRatio = (ratio - radius) / (1. - radius);
     // new position of the pixel
