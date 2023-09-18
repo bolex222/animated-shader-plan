@@ -10,17 +10,21 @@ export class Plan extends THREE.Mesh {
   #debug = {
     x: 0,
   }
+  #previousValue = 0;
+  #previousValue2 = 0;
   constructor (width, height) {
 
     const material = new THREE.RawShaderMaterial({
       fragmentShader,
       vertexShader,
       alpha: true,
+      transparent: true,
       uniforms: {
         uTime: { value: 0 },
         uProgress: { value: 0 },
         uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
         uDelay: { value: 0 },
+        uLerpProgression: { value: 0 },
       }
     })
 
@@ -42,6 +46,16 @@ export class Plan extends THREE.Mesh {
 
   animate = (animationProgression, time) => {
     this.material.uniforms.uTime.value = time
-    this.material.uniforms.uProgress.value = animationProgression
+    // this.material.uniforms.uProgress.value = animationProgression
+    const localLerp = this.#previousValue + ((  animationProgression - this.#previousValue) * 0.2 )
+    const localLerp2 = this.#previousValue2 + ((  animationProgression - this.#previousValue2) * 0.1 )
+    this.material.uniforms.uProgress.value = localLerp
+    this.material.uniforms.uLerpProgression.value = localLerp2
+    // console.log(animationProgression, localLerp)
+    this.#previousValue = localLerp
+    this.#previousValue2 = localLerp2
+
+    console.log(localLerp+ ( (animationProgression - localLerp) * this.#debug.x ))
+
   }
 }
