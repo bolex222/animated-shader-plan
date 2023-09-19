@@ -6,6 +6,10 @@ export const calculateAdjacent = (angle, opposite) => {
   return opposite / Math.tan(angle);
 }
 
+export const calculateOpposite = (angle, adjacent) => {
+  return adjacent * Math.tan(angle);
+}
+
 export const clamp = (value, min, max) => {
   return Math.min(Math.max(value, min), max);
 }

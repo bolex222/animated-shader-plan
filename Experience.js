@@ -28,7 +28,7 @@ export class Experience {
     this.#sizesManager.addCallBack(this.#camera.handleScreenResize, 'camera')
     this.#scrollManager = new ScrollManager('#scroll_distance')
     this.#sizesManager.addCallBack(this.#scrollManager.handleScreenResize, 'scrollManager1')
-    this.#plan = new Plan(1, 0.7)
+    this.#plan = new Plan(1, 0.7, this.#camera)
     this.#sizesManager.addCallBack(this.#plan.handleScreenResize, 'plan')
     this.#scene.add(this.#plan)
     this.addRafCallback(this.#plan.animate, 'plan')

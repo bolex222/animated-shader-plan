@@ -1,9 +1,12 @@
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
-# uniform float uProgress;
+uniform float uProgress;
 uniform float uDelay;
 uniform float uLerpProgression;
+uniform float uSmallScreenDistance;
+uniform float uFullScreenDistance;
+uniform float uSmallScreenSize;
 
 attribute vec3 position;
 attribute vec2 uv;
@@ -27,9 +30,15 @@ void main()
 
     float lerpBalanceY = lerpProgress + (easeOutQuad( uv.y ) * (progress - lerpProgress));
     float lerpBalanceX = lerpProgress + (easeOutQuad( 1. - uv.x ) * (progress - lerpProgress));
+    modelPosition.z = -uFullScreenDistance;
+    float zDistance = uSmallScreenDistance - uFullScreenDistance;
 
-    modelPosition.z = -1.5 * lerpBalanceY;
-    modelPosition.z += -1.5 * lerpBalanceX;
+    modelPosition.z += -(zDistance / 2.) * lerpBalanceY;
+    modelPosition.z += -(zDistance / 2.) * lerpBalanceX;
+
+    float m = 1. / uSmallScreenSize;
+    float offsetX = m * ((0.5 - uSmallScreenSize) + (uSmallScreenSize / 2.));
+    modelPosition.x += progress * offsetX;
 
     vec4 viewPosition = viewMatrix * modelPosition;
     vec4 projectedPosition = projectionMatrix * viewPosition;
