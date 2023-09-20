@@ -7,6 +7,7 @@ document.querySelector('#app').innerHTML = `
     <canvas id="canvas"></canvas>
     <div style="height: 200vh;"></div>
     <div id="scroll_distance" class="scrollDistance"></div>
+    <div id="full_screen"></div>
     <div style="height: 200vh;"></div>
   </div>
 `

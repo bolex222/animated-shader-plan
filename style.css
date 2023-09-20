@@ -26,3 +26,9 @@ body {
     width: 20px;
     background: linear-gradient(45deg, blue, red);
 }
+
+#full_screen {
+    width: 100%;
+    height: 200vh;
+    background-color: pink;
+}

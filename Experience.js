@@ -27,21 +27,23 @@ export class Experience {
 
 
     const planScrollManager = new ScrollManager('#scroll_distance')
-
+    const fullScreenVideoScrollManager = new ScrollManager('#full_screen')
     const bodyScrollManager = new ScrollManager('body')
 
     const plan = new Plan(1, 0.7, this.#camera)
 
     //RAFs
     this.addRafCallback(plan.animate, planScrollManager, 'plan')
-    this.addRafCallback(this.#camera.animate,bodyScrollManager, 'camera')
+    this.addRafCallback(this.#camera.animate, bodyScrollManager, 'camera')
+    this.addRafCallback(plan.animateFullScreen, fullScreenVideoScrollManager, 'fullscreen')
 
     // resize manager
     this.#sizesManager = new ScreenManager()
     this.#sizesManager.addCallBack(this.#camera.handleScreenResize, 'camera')
     this.#sizesManager.addCallBack(this.#scene.handleScreenResize, 'scene')
     this.#sizesManager.addCallBack(planScrollManager.handleScreenResize, 'scrollManager1')
-    this.#sizesManager.addCallBack(bodyScrollManager.handleScreenResize, 'scrollManager1')
+    this.#sizesManager.addCallBack(bodyScrollManager.handleScreenResize, 'scrollManager2')
+    this.#sizesManager.addCallBack(fullScreenVideoScrollManager.handleScreenResize, 'scrollManager3')
     this.#sizesManager.addCallBack(plan.handleScreenResize, 'plan')
 
 
@@ -65,8 +67,7 @@ export class Experience {
 
   playAllCallbacks = (num) => {
     this.#rafCallbacks.map(callback => {
-      const animationProgression = callback.scrollManager.scrollProgression
-      callback.callback(animationProgression, num)
+      callback.callback(callback.scrollManager, num)
     })
   }
 

@@ -13,6 +13,7 @@ export class Plan extends THREE.Mesh {
   #fullScreenDistance = 0;
   #SmallScreenDistance = 0;
   #camera = null;
+  #proxy
 
   constructor (width, height, camera) {
 
@@ -51,7 +52,6 @@ export class Plan extends THREE.Mesh {
       } else {
         this.remove( wireframe );
       }
-
     })
 
     this.#camera = camera
@@ -73,21 +73,30 @@ export class Plan extends THREE.Mesh {
     this.material.uniforms.uFullScreenDistance.value = this.#fullScreenDistance
     this.material.uniforms.uSmallScreenSize.value = this.#smallSize
     this.position.y = - 3 * (innerHeight / innerWidth)
-
-
   }
 
-  animate = (animationProgression, time) => {
+
+  animate = (scrollManager, time) => {
+    const scrollProgression = scrollManager.scrollProgression
     this.material.uniforms.uTime.value = time
-    const localLerp =  this.#previousValue + ((  animationProgression - this.#previousValue) * 0.2 )
-    const localLerp2 =  this.#previousValue2 + ((  animationProgression - this.#previousValue2)* 0.1 )
+    const localLerp =  this.#previousValue + ((  scrollProgression - this.#previousValue) * 0.2 )
+    const localLerp2 =  this.#previousValue2 + ((  scrollProgression - this.#previousValue2)* 0.1 )
 
     this.material.uniforms.uProgress.value = localLerp.toFixed(6)
     this.material.uniforms.uLerpProgression.value = localLerp2.toFixed(6)
     const distZ = this.#SmallScreenDistance - this.#fullScreenDistance
-    this.position.z = - this.#fullScreenDistance - (distZ * (1 -  animationProgression ))
+    this.position.z = - this.#fullScreenDistance - (distZ * (1 -  scrollProgression ))
 
     this.#previousValue = localLerp
     this.#previousValue2 = localLerp2
+  }
+
+  animateFullScreen = (scrollManager, time) => {
+    const progression = scrollManager.fullScrollProgression
+    const scrollDistance = scrollManager.fullScrollDistance
+    const startPoint = scrollManager.fullStartPoint
+    const originalY = - 3 * (innerHeight / innerWidth)
+
+    this.position.y = originalY - progression * (( scrollDistance / innerHeight ) * (innerHeight / innerWidth));
   }
 }

@@ -32,7 +32,7 @@ export class Camera extends PerspectiveCamera {
     return calculateHorizontalFov(this.#__verticalFov, window.innerWidth / window.innerHeight)
   }
 
-  animate = (progression, timeSet) => {
+  animate = () => {
     this.position.y = - (scrollY / innerHeight) * (innerHeight / innerWidth)
   }
 
