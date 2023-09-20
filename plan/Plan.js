@@ -1,14 +1,12 @@
 import * as THREE from 'three'
 import vertexShader from './shaders/vertexShader.glsl'
 import fragmentShader from './shaders/fragmentShader.glsl'
-import gui from '../gui.js'
-import { calculateAdjacent, calculateHorizontalFov, calculateOpposite, degToRad } from '../Maths.utils.js'
+import {debug } from '../gui.js'
+
+import { calculateAdjacent, calculateHorizontalFov, calculateOpposite, degToRad, clamp} from '../Maths.utils.js'
 
 export class Plan extends THREE.Mesh {
 
-  #debug = {
-    x: 0,
-  }
   #previousValue = 0;
   #previousValue2 = 0;
   #smallSize = 0.4375;
@@ -21,8 +19,7 @@ export class Plan extends THREE.Mesh {
     const material = new THREE.RawShaderMaterial({
       fragmentShader,
       vertexShader,
-      wireframe: false,
-      // alpha: true,
+      wireframe: debug.devMode,
       transparent: true,
       uniforms: {
         uTime: { value: 0 },
@@ -36,23 +33,33 @@ export class Plan extends THREE.Mesh {
       }
     })
 
+    const planeGeometry = new THREE.PlaneGeometry(1, ( window.innerHeight / window.innerWidth ) );
+
     super(
-      new THREE.PlaneGeometry(width, height ),
+      planeGeometry,
       material
     )
 
+    var geometry2 = new THREE.WireframeGeometry( planeGeometry ); // or EdgesGeometry
+    var material2 = new THREE.LineBasicMaterial( { color: 0x000000, transparent: true } );
+    var wireframe = new THREE.LineSegments( geometry2, material2 );
+
+    debug.callBack.push((value) => {
+      this.material.wireframe = value
+      if (value) {
+        this.add( wireframe );
+      } else {
+        this.remove( wireframe );
+      }
+
+    })
+
     this.#camera = camera
 
-    gui.add(this.material.uniforms.uDelay, 'value', 0, 0.5, 0.001)
-    gui.add(this.#debug, 'x', 0, 2, 0.001)
   }
 
   calculateDistanceFromCamera = (planSize) => {
     return calculateAdjacent(degToRad( this.#camera.horizontalFov / 2 ), planSize / 2);
-  }
-
-  calculateSizeBasedOnDistance = (distance) => {
-    return calculateOpposite(degToRad( this.#camera.horizontalFov / 2 ), distance);
   }
 
   handleScreenResize = () => {
@@ -65,14 +72,21 @@ export class Plan extends THREE.Mesh {
     this.material.uniforms.uSmallScreenDistance.value = this.#SmallScreenDistance
     this.material.uniforms.uFullScreenDistance.value = this.#fullScreenDistance
     this.material.uniforms.uSmallScreenSize.value = this.#smallSize
+    this.position.y = - 3 * (innerHeight / innerWidth)
+
+
   }
 
   animate = (animationProgression, time) => {
     this.material.uniforms.uTime.value = time
-    const localLerp = this.#previousValue + ((  animationProgression - this.#previousValue) * 0.2 )
-    const localLerp2 = this.#previousValue2 + ((  animationProgression - this.#previousValue2) * 0.1 )
-    this.material.uniforms.uProgress.value = localLerp
-    this.material.uniforms.uLerpProgression.value = localLerp2
+    const localLerp =  this.#previousValue + ((  animationProgression - this.#previousValue) * 0.2 )
+    const localLerp2 =  this.#previousValue2 + ((  animationProgression - this.#previousValue2)* 0.1 )
+
+    this.material.uniforms.uProgress.value = localLerp.toFixed(6)
+    this.material.uniforms.uLerpProgression.value = localLerp2.toFixed(6)
+    const distZ = this.#SmallScreenDistance - this.#fullScreenDistance
+    this.position.z = - this.#fullScreenDistance - (distZ * (1 -  animationProgression ))
+
     this.#previousValue = localLerp
     this.#previousValue2 = localLerp2
   }

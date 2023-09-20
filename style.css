@@ -4,15 +4,25 @@
     box-sizing: border-box;
 }
 
+body {
+    /*background-image: repeating-linear-gradient(*/
+    /*        0deg,*/
+    /*        #494949,*/
+    /*        #494949 10vh,*/
+    /*        #cbcbcb 10vh,*/
+    /*        #cbcbcb 20vh !* determines size *!*/
+    /*);*/
+}
+
 #canvas {
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
 }
 
 
 .scrollDistance {
-  height: 200vh;
-  width: 20px;
+    height: 200vh;
+    width: 20px;
     background: linear-gradient(45deg, blue, red);
 }

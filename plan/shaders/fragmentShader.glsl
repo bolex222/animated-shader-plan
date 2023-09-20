@@ -26,5 +26,5 @@ void main()
     float d = sdBox( p, vec2(newRatio *(1. - radius), 1. - radius));
     // alpha calculated on the sdf and the radius
 
-    gl_FragColor = vec4(vec3(vUv.x, vUv.y, 0.8),1. - step(radius, d));
+    gl_FragColor = vec4(vec3(vUv.x, vUv.y, 0.8),( 1. - step(radius, d) ));
 }

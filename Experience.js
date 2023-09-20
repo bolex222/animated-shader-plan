@@ -8,53 +8,70 @@ import * as THREE from 'three'
 export class Experience {
 
   #camera
-  #plan
   #scene
   #sizesManager
-  #scrollManager
-
   #rafReference
   #rafCallbacks = []
+  #killCallbacks = []
 
   constructor () {
     this.setup()
   }
 
   setup = () => {
-    this.#sizesManager = new ScreenManager()
+    // scene
     this.#scene = new Scene('#canvas')
-    this.#sizesManager.addCallBack(this.#scene.handleScreenResize, 'scene')
+
+    // camera
     this.#camera = new Camera()
+
+
+    const planScrollManager = new ScrollManager('#scroll_distance')
+
+    const bodyScrollManager = new ScrollManager('body')
+
+    const plan = new Plan(1, 0.7, this.#camera)
+
+    //RAFs
+    this.addRafCallback(plan.animate, planScrollManager, 'plan')
+    this.addRafCallback(this.#camera.animate,bodyScrollManager, 'camera')
+
+    // resize manager
+    this.#sizesManager = new ScreenManager()
     this.#sizesManager.addCallBack(this.#camera.handleScreenResize, 'camera')
-    this.#scrollManager = new ScrollManager('#scroll_distance')
-    this.#sizesManager.addCallBack(this.#scrollManager.handleScreenResize, 'scrollManager1')
-    this.#plan = new Plan(1, 0.7, this.#camera)
-    this.#sizesManager.addCallBack(this.#plan.handleScreenResize, 'plan')
-    this.#scene.add(this.#plan)
-    this.addRafCallback(this.#plan.animate, 'plan')
+    this.#sizesManager.addCallBack(this.#scene.handleScreenResize, 'scene')
+    this.#sizesManager.addCallBack(planScrollManager.handleScreenResize, 'scrollManager1')
+    this.#sizesManager.addCallBack(bodyScrollManager.handleScreenResize, 'scrollManager1')
+    this.#sizesManager.addCallBack(plan.handleScreenResize, 'plan')
 
 
     const axesHelper = new THREE.AxesHelper( 5 );
     this.#scene.add( axesHelper );
+    this.#scene.add(plan)
   }
 
 
-  addRafCallback = (callback, id) => {
-    this.#rafCallbacks = [...this.#rafCallbacks, { callback, id }]
+  addRafCallback = (callback, scrollManager, id) => {
+    this.#rafCallbacks = [...this.#rafCallbacks, { callback, scrollManager, id }]
+  }
+
+  addKillCallback = (callback) => {
+    this.#killCallbacks = [...this.#killCallbacks, callback]
   }
 
   removeRafCallback = (id) => {
     this.#rafCallbacks = [...this.#rafCallbacks].filter((callback) => callback.id !== id)
   }
 
-  playAllCallbacks = (animationProgression) => {
-    this.#rafCallbacks.map(callback => callback.callback(animationProgression))
+  playAllCallbacks = (num) => {
+    this.#rafCallbacks.map(callback => {
+      const animationProgression = callback.scrollManager.scrollProgression
+      callback.callback(animationProgression, num)
+    })
   }
 
   tick = (num) => {
-
-    const animationProgression = this.#scrollManager.scrollProgression
-    this.playAllCallbacks(animationProgression, num)
+    this.playAllCallbacks(num)
     this.#scene.render(this.#camera)
     this.#rafReference = requestAnimationFrame(this.tick)
   }
@@ -66,7 +83,6 @@ export class Experience {
 
   killExperience = () => {
     cancelAnimationFrame(this.#rafReference)
-    this.#sizesManager.killScreenManager()
+    this.#killCallbacks.map(callback => callback())
   }
-
 }

@@ -30,6 +30,7 @@ void main()
 
     float lerpBalanceY = lerpProgress + (easeOutQuad( uv.y ) * (progress - lerpProgress));
     float lerpBalanceX = lerpProgress + (easeOutQuad( 1. - uv.x ) * (progress - lerpProgress));
+
     modelPosition.z = -uFullScreenDistance;
     float zDistance = uSmallScreenDistance - uFullScreenDistance;
 
@@ -38,7 +39,7 @@ void main()
 
     float m = 1. / uSmallScreenSize;
     float offsetX = m * ((0.5 - uSmallScreenSize) + (uSmallScreenSize / 2.));
-    modelPosition.x += progress * offsetX;
+    modelPosition.x += lerpBalanceX * offsetX;
 
     vec4 viewPosition = viewMatrix * modelPosition;
     vec4 projectedPosition = projectionMatrix * viewPosition;
