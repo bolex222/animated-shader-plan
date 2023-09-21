@@ -76,9 +76,7 @@ export class Plan extends THREE.Group {
     this.planMesh.material.uniforms.uProgress.value = scrollProgression
     this.planMesh.material.uniforms.uLerpProgression2.value = localLerp2.toFixed(6)
     this.planMesh.material.uniforms.uLerpProgression.value = localLerp.toFixed(6)
-    // const distZ = this.#SmallScreenDistance - this.#fullScreenDistance
-    const y = ( (1 - scrollProgression) * ( 1.5 * (innerHeight / innerWidth)) ) - 1 * (innerHeight / innerWidth)
-    this.planMesh.position.y = y
+    this.planMesh.position.y =((1 - scrollProgression) * ( 1.5 * (innerHeight / innerWidth)) ) - 1 * (innerHeight / innerWidth)
 
     this.#previousValue = localLerp
     this.#previousValue2 = localLerp2
