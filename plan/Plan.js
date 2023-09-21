@@ -1,17 +1,14 @@
 import * as THREE from 'three'
 import vertexShader from './shaders/vertexShader.glsl'
 import fragmentShader from './shaders/fragmentShader.glsl'
-// import gui, {debug} from '../gui.js'
-
 import { calculateAdjacent, calculateHorizontalFov, calculateOpposite, degToRad, clamp} from '../Maths.utils.js'
+
+const PLAN_PROPORTION = 0.4375;
 
 export class Plan extends THREE.Group {
 
   #previousValue = 0;
   #previousValue2 = 0;
-  #smallSize = 0.4375;
-  #fullScreenDistance = 0;
-  #SmallScreenDistance = 0;
   #camera = null;
   planMesh
 
@@ -24,10 +21,8 @@ export class Plan extends THREE.Group {
       wireframe: false,
       transparent: true,
       uniforms: {
-        uTime: { value: 0 },
         uProgress: { value: 0 },
         uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-        uDelay: { value: 0 },
         uLerpProgression2: { value: 0 },
         uLerpProgression: { value: 0 },
         uSmallScreenDistance: { value: 0 },
@@ -40,10 +35,7 @@ export class Plan extends THREE.Group {
 
     this.planMesh = new THREE.Mesh( planeGeometry, material );
     this.add( this.planMesh );
-
-    // var geometry2 = new THREE.WireframeGeometry( planeGeometry ); // or EdgesGeometry
-    // var material2 = new THREE.LineBasicMaterial( { color: 0x000000, transparent: true } );
-    // var wireframe = new THREE.LineSegments( geometry2, material2 );
+    this.planMesh.frustumCulled = false;
 
     this.#camera = camera
 
@@ -58,24 +50,23 @@ export class Plan extends THREE.Group {
     this.planMesh.geometry.dispose()
     this.planMesh.geometry = newPlane
     this.planMesh.material.uniforms.uResolution.value = new THREE.Vector2(window.innerWidth, window.innerHeight)
-    this.#fullScreenDistance = this.calculateDistanceFromCamera( 1 )
-    this.#SmallScreenDistance = this.calculateDistanceFromCamera(1 / this.#smallSize)
-    this.planMesh.material.uniforms.uSmallScreenDistance.value = this.#SmallScreenDistance
-    this.planMesh.material.uniforms.uFullScreenDistance.value = this.#fullScreenDistance
-    this.planMesh.material.uniforms.uSmallScreenSize.value = this.#smallSize
+    this.planMesh.material.uniforms.uSmallScreenDistance.value = this.calculateDistanceFromCamera(1 / PLAN_PROPORTION)
+    this.planMesh.material.uniforms.uFullScreenDistance.value = this.calculateDistanceFromCamera( 1 )
+    this.planMesh.material.uniforms.uSmallScreenSize.value = PLAN_PROPORTION
     this.planMesh.position.y = - 1 * (innerHeight / innerWidth)
   }
 
 
   animate = (scrollManager, time) => {
     const scrollProgression = scrollManager.scrollProgression
-    this.planMesh.material.uniforms.uTime.value = time
     const localLerp =  this.#previousValue + ((  scrollProgression - this.#previousValue) * 0.2 )
     const localLerp2 =  this.#previousValue2 + ((  scrollProgression - this.#previousValue2)* 0.1 )
 
     this.planMesh.material.uniforms.uProgress.value = scrollProgression
     this.planMesh.material.uniforms.uLerpProgression2.value = localLerp2.toFixed(6)
     this.planMesh.material.uniforms.uLerpProgression.value = localLerp.toFixed(6)
+
+    // don't remove de time 1 at the end of the line (here to remember me that it can change depending on the section height)
     this.planMesh.position.y =((1 - scrollProgression) * ( 1.5 * (innerHeight / innerWidth)) ) - 1 * (innerHeight / innerWidth)
 
     this.#previousValue = localLerp
