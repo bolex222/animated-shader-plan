@@ -17,6 +17,7 @@ export class Scene {
     const canvas = document.querySelector(querySelector);
     if (!canvas) {throw new Error('Scene: canvas not found')}
     this.#scene = new ThreeScene();
+    console.log(this.#scene)
     this.#renderer = new WebGLRenderer({
       canvas,
       alpha: true,

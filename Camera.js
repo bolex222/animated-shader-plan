@@ -7,9 +7,6 @@ export class Camera extends PerspectiveCamera {
   #__verticalFov
   #screenHeightIn3d = 0;
   #totalHeight
-  debug = {
-    r: 0,
-  }
 
   constructor (verticalFov = 50) {
     super(verticalFov, window.innerWidth / window.innerHeight, 0.001, 1000);

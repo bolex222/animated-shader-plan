@@ -9,11 +9,12 @@ export const debug = {
   callBack: [],
 }
 
-const gui = new dat.GUI();
-gui.add(debug, 'devMode', true, false).onChange((value) => {
-  debug.callBack.forEach((callBack) => {
-    callBack(value)
-  })
-})
+// const gui = new dat.GUI();
+// gui.add(debug, 'devMode', true, false).onChange((value) => {
+//   debug.callBack.forEach((callBack) => {
+//     callBack(value)
+//   })
+// })
+const gui = false;
 
 export default gui;
