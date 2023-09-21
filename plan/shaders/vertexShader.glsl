@@ -39,7 +39,7 @@ void main()
 
     float m = 1. / uSmallScreenSize;
     float offsetX = m * ((0.5 - uSmallScreenSize) + (uSmallScreenSize / 2.));
-    modelPosition.x += lerpBalanceX * offsetX;
+    modelPosition.x += progress * offsetX;
 
     vec4 viewPosition = viewMatrix * modelPosition;
     vec4 projectedPosition = projectionMatrix * viewPosition;

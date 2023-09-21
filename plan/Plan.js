@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 import vertexShader from './shaders/vertexShader.glsl'
 import fragmentShader from './shaders/fragmentShader.glsl'
-import {debug } from '../gui.js'
+import {debug} from '../gui.js'
 
 import { calculateAdjacent, calculateHorizontalFov, calculateOpposite, degToRad, clamp} from '../Maths.utils.js'
 
-export class Plan extends THREE.Mesh {
+export class Plan extends THREE.Group {
 
   #previousValue = 0;
   #previousValue2 = 0;
@@ -13,14 +13,15 @@ export class Plan extends THREE.Mesh {
   #fullScreenDistance = 0;
   #SmallScreenDistance = 0;
   #camera = null;
-  #proxy
+  planMesh
 
   constructor (width, height, camera) {
 
+    super()
     const material = new THREE.RawShaderMaterial({
       fragmentShader,
       vertexShader,
-      wireframe: debug.devMode,
+      wireframe: false,
       transparent: true,
       uniforms: {
         uTime: { value: 0 },
@@ -33,24 +34,21 @@ export class Plan extends THREE.Mesh {
         uSmallScreenSize: { value: 0 },
       }
     })
-
     const planeGeometry = new THREE.PlaneGeometry(1, ( window.innerHeight / window.innerWidth ) );
 
-    super(
-      planeGeometry,
-      material
-    )
+    this.planMesh = new THREE.Mesh( planeGeometry, material );
+    this.add( this.planMesh );
 
     var geometry2 = new THREE.WireframeGeometry( planeGeometry ); // or EdgesGeometry
     var material2 = new THREE.LineBasicMaterial( { color: 0x000000, transparent: true } );
     var wireframe = new THREE.LineSegments( geometry2, material2 );
 
     debug.callBack.push((value) => {
-      this.material.wireframe = value
+      this.planMesh.material.wireframe = value
       if (value) {
-        this.add( wireframe );
+        this.planMesh.add( wireframe );
       } else {
-        this.remove( wireframe );
+        this.planMesh.remove( wireframe );
       }
     })
 
@@ -64,28 +62,29 @@ export class Plan extends THREE.Mesh {
 
   handleScreenResize = () => {
     const newPlane = new THREE.PlaneGeometry(1, ( window.innerHeight / window.innerWidth ), 16, 16)
-    this.geometry.dispose()
-    this.geometry = newPlane
-    this.material.uniforms.uResolution.value = new THREE.Vector2(window.innerWidth, window.innerHeight)
+    this.planMesh.geometry.dispose()
+    this.planMesh.geometry = newPlane
+    this.planMesh.material.uniforms.uResolution.value = new THREE.Vector2(window.innerWidth, window.innerHeight)
     this.#fullScreenDistance = this.calculateDistanceFromCamera( 1 )
     this.#SmallScreenDistance = this.calculateDistanceFromCamera(1 / this.#smallSize)
-    this.material.uniforms.uSmallScreenDistance.value = this.#SmallScreenDistance
-    this.material.uniforms.uFullScreenDistance.value = this.#fullScreenDistance
-    this.material.uniforms.uSmallScreenSize.value = this.#smallSize
-    this.position.y = - 3 * (innerHeight / innerWidth)
+    this.planMesh.material.uniforms.uSmallScreenDistance.value = this.#SmallScreenDistance
+    this.planMesh.material.uniforms.uFullScreenDistance.value = this.#fullScreenDistance
+    this.planMesh.material.uniforms.uSmallScreenSize.value = this.#smallSize
+    this.planMesh.position.y = - 1 * (innerHeight / innerWidth)
   }
 
 
   animate = (scrollManager, time) => {
     const scrollProgression = scrollManager.scrollProgression
-    this.material.uniforms.uTime.value = time
+    this.planMesh.material.uniforms.uTime.value = time
     const localLerp =  this.#previousValue + ((  scrollProgression - this.#previousValue) * 0.2 )
     const localLerp2 =  this.#previousValue2 + ((  scrollProgression - this.#previousValue2)* 0.1 )
 
-    this.material.uniforms.uProgress.value = localLerp.toFixed(6)
-    this.material.uniforms.uLerpProgression.value = localLerp2.toFixed(6)
-    const distZ = this.#SmallScreenDistance - this.#fullScreenDistance
-    this.position.z = - this.#fullScreenDistance - (distZ * (1 -  scrollProgression ))
+    this.planMesh.material.uniforms.uProgress.value = localLerp.toFixed(6)
+    this.planMesh.material.uniforms.uLerpProgression.value = localLerp2.toFixed(6)
+    // const distZ = this.#SmallScreenDistance - this.#fullScreenDistance
+    const y = ( (1 - scrollProgression) * ( 1.5 * (innerHeight / innerWidth)) ) - 1 * (innerHeight / innerWidth)
+    this.planMesh.position.y = y
 
     this.#previousValue = localLerp
     this.#previousValue2 = localLerp2
@@ -94,9 +93,7 @@ export class Plan extends THREE.Mesh {
   animateFullScreen = (scrollManager, time) => {
     const progression = scrollManager.fullScrollProgression
     const scrollDistance = scrollManager.fullScrollDistance
-    const startPoint = scrollManager.fullStartPoint
-    const originalY = - 3 * (innerHeight / innerWidth)
+    this.position.y = - progression * (( scrollDistance / innerHeight ) * (innerHeight / innerWidth));
 
-    this.position.y = originalY - progression * (( scrollDistance / innerHeight ) * (innerHeight / innerWidth));
   }
 }

@@ -5,6 +5,7 @@ import * as dat from 'dat.gui';
 
 export const debug = {
   devMode: false,
+
   callBack: [],
 }
 
