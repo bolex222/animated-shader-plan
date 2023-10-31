@@ -23,7 +23,7 @@ body {
 
 .scrollDistance {
     height: 200vh;
-    width: 20px;
+    width: 100%;
     /*background: linear-gradient(45deg, blue, red);*/
 }
 
