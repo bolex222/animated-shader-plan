@@ -10,11 +10,16 @@ export class Plan extends THREE.Group {
   #previousValue = 0;
   #previousValue2 = 0;
   #camera = null;
+  video
   planMesh
 
-  constructor (width, height, camera) {
-
+  constructor (width, height, camera, video) {
     super()
+
+    this.video = video;
+
+    const videoTexture = new THREE.VideoTexture(this.video.videoElement);
+
     const material = new THREE.RawShaderMaterial({
       fragmentShader,
       vertexShader,
@@ -28,6 +33,7 @@ export class Plan extends THREE.Group {
         uSmallScreenDistance: { value: 0 },
         uFullScreenDistance: { value: 0 },
         uSmallScreenSize: { value: 0 },
+        uVideoTexture: {value: videoTexture}
       }
     })
 

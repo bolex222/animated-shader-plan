@@ -3,6 +3,7 @@ import { ScrollManager } from './ScrollManager.js'
 import { ScreenManager } from './ScreenManager.js'
 import { Scene } from './Scene.js'
 import { Plan } from './plan/Plan.js'
+import { VideoManager } from './VideoManager.js'
 
 export class Experience {
 
@@ -11,6 +12,7 @@ export class Experience {
   #rafReference
   #rafCallbacks = []
   #killCallbacks = []
+  #video
 
   constructor () {
     this.setup()
@@ -28,13 +30,17 @@ export class Experience {
     const fullScreenVideoScrollManager = new ScrollManager('#full_screen')
     const bodyScrollManager = new ScrollManager('body')
 
+    //video
+    this.#video = new VideoManager('/video.mp4', fullScreenVideoScrollManager);
+
     // set up plan
-    const plan = new Plan(1, 0.7, this.#camera)
+    const plan = new Plan(1, 0.7, this.#camera, this.#video)
 
     //RAFs
     this.addRafCallback(plan.animate, planScrollManager, 'plan')
     this.addRafCallback(this.#camera.animate, bodyScrollManager, 'camera')
     this.addRafCallback(plan.animateFullScreen, fullScreenVideoScrollManager, 'fullscreen')
+    this.addRafCallback(this.#video.tick, planScrollManager, 'video')
 
     // resize manager
     const screenManager = new ScreenManager()

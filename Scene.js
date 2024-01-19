@@ -27,6 +27,7 @@ export class Scene {
 
   handleScreenResize = () => {
     this.#renderer.setSize( window.innerWidth, window.innerHeight )
+    this.#renderer.setPixelRatio(window.devicePixelRatio)
   }
 
   render = (camera) => {
