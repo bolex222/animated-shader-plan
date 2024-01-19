@@ -14,7 +14,7 @@ export class VideoManager {
     this.#videoElement.addEventListener('loadedmetadata', this.handleLoad)
     this.#videoElement.muted = true
     this.#videoElement.loop = true
-    this.#videoElement.src = url
+    this.#videoElement.src = url;
   }
 
   handleLoad = (e) => {
