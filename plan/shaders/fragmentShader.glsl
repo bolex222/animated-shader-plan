@@ -4,11 +4,9 @@ uniform float uTime;
 uniform float uProgress;
 uniform vec2 uResolution;
 uniform sampler2D uVideoTexture;
+uniform vec2 uVideoSize;
 
 varying vec2 vUv;
-
-#define VIDX 1280.
-#define VIDY 720.
 
 float sdBox(in vec2 p, in vec2 b)
 {
@@ -19,12 +17,11 @@ float sdBox(in vec2 p, in vec2 b)
 void main()
 {
 
-    float vidRatio = VIDX / VIDY;
-
+    // video ratio
+    float vidRatio = uVideoSize.x / uVideoSize.y;
 
     // plan ratio
     float ratio = uResolution.x / uResolution.y;
-
 
     vec2 videoPosition = vUv;
     if (vidRatio < ratio) {
