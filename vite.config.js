@@ -7,5 +7,5 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [glsl()],
-  base: '/animated-shader-plan/'
+  base: '/animated-shader-plan'
 })

@@ -31,7 +31,7 @@ export class Experience {
     const bodyScrollManager = new ScrollManager('body')
 
     //video
-    this.#video = new VideoManager('video.mp4', fullScreenVideoScrollManager);
+    this.#video = new VideoManager('/animated-shader-plan/video.mp4', fullScreenVideoScrollManager);
 
     // set up plan
     const plan = new Plan(1, 0.7, this.#camera, this.#video)
